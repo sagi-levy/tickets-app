@@ -1,91 +1,85 @@
 "use client";
-import { useState } from "react"; // Import useState from the 'react' package
-import Input from "C:/Users/sagil/OneDrive/שולחן העבודה/paintball-app-admin-september2023/paintballAppAdmin-main/fronted/paintball-app/src/components/common/input.jsx";
-import { useRouter } from "next/navigation";
+// EditTicketForm.js
+
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/router";
+import { updateTicket, createTicket } from "../Store/ticketActions"; // Import the action creator
 
 const EditTicketForm = ({ ticket }) => {
   const EDITMODE = ticket._id === "new" ? false : true;
+  const dispatch = useDispatch();
   const router = useRouter();
-  const startingData = {
-    title: "",
-    description: "",
-    priority: 1,
-    progress: 0,
-    status: "not started",
-    category: "software problem",
-  };
+  const [formData, setFormData] = useState({
+    title: EDITMODE ? ticket.title : "",
+    description: EDITMODE ? ticket.description : "",
+    priority: EDITMODE ? ticket.priority : 1,
+    progress: EDITMODE ? ticket.progress : 0,
+    status: EDITMODE ? ticket.status : "not started",
+    category: EDITMODE ? ticket.category : "Hardware Problem",
+  });
   const categories = [
-    "software problem",
-    "machine problem",
-    "hardware problem",
+    "Hardware Problem",
+    "Software Problem",
+    "Application Development",
+    "Project",
   ];
-  if (EDITMODE) {
-    startingData["title"] = ticket.title;
-    startingData["description"] = ticket.description;
-    startingData["priority"] = ticket.priority;
-    startingData["progress"] = ticket.progress;
-    startingData["status"] = ticket.status;
-    startingData["category"] = ticket.category;
-  }
 
-  const [formData, setFormData] = useState(startingData);
   const handleChange = (e) => {
-    const value = e.target.value;
-    const name = e.target.name;
-
+    const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (EDITMODE) {
-      const res = await fetch(`/api/Tickets/${ticket._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({ formData }),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to update ticket");
+      try {
+        // Dispatch the action to update the ticket
+        await dispatch(updateTicket(ticket._id, formData));
+
+        // Refresh and navigate to home page
+      } catch (error) {
+        console.error(error);
+        // Handle error
       }
     } else {
-      const response = await fetch("/api/Tickets", {
-        method: "POST",
-        headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ formData }),
-      });
-      if (!response.ok) {
-        throw new Error("failed to create ticket");
+      try {
+        // Dispatch the action to update the ticket
+        await dispatch(createTicket(ticket._id, formData));
+
+        // Refresh and navigate to home page
+      } catch (error) {
+        console.error(error);
+        // Handle error
       }
     }
     router.refresh();
     router.push("/");
   };
+
   return (
-    <div className=" flex justify-center">
-      <form onSubmit={handleSubmit} method="post">
+    <div className="flex justify-center">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-1/2">
         <h3>{EDITMODE ? "Update Your Ticket" : "Create New Ticket"}</h3>
-        <Input
-          name={"title"}
-          required={true}
-          error={null}
-          type={"text"}
-          id={"title"}
-          onChange={handleChange}
+        <label>Title</label>
+        <input
+          type="text"
+          name="title"
           value={formData.title}
-        />
-        <Input
-          name={"description"}
-          required={true}
-          error={null}
-          type={"text"}
-          id={"description"}
           onChange={handleChange}
+          required
+        />
+        <label>Description</label>
+        <textarea
+          name="description"
           value={formData.description}
-          rows="5" // not working...
+          onChange={handleChange}
+          rows="5"
+          required
         />
         <label>Category</label>
         <select
@@ -93,63 +87,30 @@ const EditTicketForm = ({ ticket }) => {
           value={formData.category}
           onChange={handleChange}
         >
-          {" "}
-          {categories?.map((category, _index) => (
-            <option key={_index} value={category}>
+          {categories.map((category, index) => (
+            <option key={index} value={category}>
               {category}
             </option>
           ))}
         </select>
+        <label>Priority</label>
         <div>
-          <Input
-            id="priority-1"
-            name="priority"
-            type="radio"
-            onChange={handleChange}
-            value={1}
-            checked={formData.priority == 1}
-          />
-          <label>1</label>
-          <Input
-            id="priority-2"
-            name="priority"
-            type="radio"
-            onChange={handleChange}
-            value={2}
-            checked={formData.priority == 2}
-          />
-          <label>2</label>
-          <Input
-            id="priority-3"
-            name="priority"
-            type="radio"
-            onChange={handleChange}
-            value={3}
-            checked={formData.priority == 3}
-          />
-          <label>3</label>
-          <Input
-            id="priority-4"
-            name="priority"
-            type="radio"
-            onChange={handleChange}
-            value={4}
-            checked={formData.priority == 4}
-          />
-          <label>4</label>
-          <Input
-            id="priority-5"
-            name="priority"
-            type="radio"
-            onChange={handleChange}
-            value={5}
-            checked={formData.priority == 5}
-          />
-          <label>5</label>
+          {[1, 2, 3, 4, 5].map((priority) => (
+            <div key={priority}>
+              <input
+                type="radio"
+                name="priority"
+                value={priority}
+                checked={formData.priority === priority}
+                onChange={handleChange}
+              />
+              <label>{priority}</label>
+            </div>
+          ))}
         </div>
-        <Input
+        <label>Progress</label>
+        <input
           type="range"
-          id="progress"
           name="progress"
           value={formData.progress}
           min="0"
@@ -158,11 +119,17 @@ const EditTicketForm = ({ ticket }) => {
         />
         <label>Status</label>
         <select name="status" value={formData.status} onChange={handleChange}>
-          <option value="not started">Not Started</option>
-          <option value="started">Started</option>
-          <option value="done">Done</option>
+          {["not started", "started", "done"].map((status, index) => (
+            <option key={index} value={status}>
+              {status}
+            </option>
+          ))}
         </select>
-        <Input type="submit" className="btn max-w-xs" />
+        <input
+          type="submit"
+          className="btn max-w-xs"
+          value={EDITMODE ? "Update Ticket" : "Create Ticket"}
+        />
       </form>
     </div>
   );

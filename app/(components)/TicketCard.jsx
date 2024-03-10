@@ -3,7 +3,16 @@ import PriorityDisplay from "./PriorityDisplay";
 import ProgressDisplay from "./ProgressDisplay";
 import StatusDisplay from "./StatusDisplay";
 import Link from "next/link"
+
+import { useDispatch } from 'react-redux';
+
 const TicketCard = ({ticket}) => {
+
+  const deleteTicket = (id) => {
+    dispatch({ type: 'DELETE_TICKET', payload: id });
+  };
+
+  
     function formatTimestamp(timestamp) {
         const options = {
           year: "numeric",
