@@ -1,91 +1,94 @@
 // ticketActions.js
 import { NextResponse } from "next/server";
-
-// Action creator to fetch all tickets
-export const fetchTickets = () => {
-  return async (dispatch) => {
-    try {
-      const res = await fetch("http://localhost:3000/api/Tickets");
-      if (!res.ok) {
-        throw new Error("Failed to fetch tickets");
-      }
-      const data = await res.json();
-      dispatch({ type: "FETCH_TICKETS_SUCCESS", payload: data.tickets });
-    } catch (error) {
-      dispatch({ type: "FETCH_TICKETS_FAILURE", payload: error.message });
-    }
-  };
-};
-
-// Action creator to create a new ticket
-export const createTicket = (formData) => {
+import { ticketsActions } from "../Store/ticketsSlice";
+export const createNewTicket = (formData) => {
   return async (dispatch) => {
     try {
       const res = await fetch("http://localhost:3000/api/Tickets", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify(formData),
       });
       if (!res.ok) {
-        throw new Error("Failed to create ticket");
-      }
-      dispatch(fetchTickets()); // Refetch tickets after creating a new one
-    } catch (error) {
-      dispatch({ type: "CREATE_TICKET_FAILURE", payload: error.message });
-    }
-  };
-};
-
-// Action creator to update a ticket
-export const updateTicket = (id, formData) => {
-  return async (dispatch) => {
-    try {
-      const res = await fetch(`http://localhost:3000/api/Tickets/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ formData }),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to update ticket");
-      }
-      dispatch(fetchTickets()); // Refetch tickets after updating
-    } catch (error) {
-      dispatch({ type: "UPDATE_TICKET_FAILURE", payload: error.message });
-    }
-  };
-};
-
-// Action creator to delete a ticket
-export const deleteTicket = (id) => {
-  return async (dispatch) => {
-    try {
-      const res = await fetch(`http://localhost:3000/api/Tickets/${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) {
-        throw new Error("Failed to delete ticket");
-      }
-      dispatch(fetchTickets()); // Refetch tickets after deleting
-    } catch (error) {
-      dispatch({ type: "DELETE_TICKET_FAILURE", payload: error.message });
-    }
-  };
-};
-export const fetchTicketById = (id) => {
-  return async (dispatch) => {
-    try {
-      const res = await fetch(`http://localhost:3000/api/Tickets/${id}`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch ticket");
+        throw new Error("Failed to fetch tickets");
       }
       const data = await res.json();
-      dispatch({ type: "FETCH_TICKET_SUCCESS", payload: data.foundTicket });
+
+      dispatch(ticketsActions.createTicket(data));
     } catch (error) {
-      dispatch({ type: "FETCH_TICKET_FAILURE", payload: error.message });
+      throw new Error("Failed to fetch tickets");
+      // dispatch({ type: "FETCH_TICKETS_FAILURE", payload: error.message });
+    }
+  };
+};
+export const deleteTicket = (ticketID) => {
+  return async (dispatch) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/Tickets", {
+        method: "DELETE",
+        body: JSON.stringify(ticketID),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch tickets");
+      }
+      const data = await res.json();
+
+      dispatch(ticketsActions.deleteTicket(ticketID));
+    } catch (error) {
+      throw new Error("Failed to fetch tickets");
+      // dispatch({ type: "FETCH_TICKETS_FAILURE", payload: error.message });
+    }
+  };
+};
+export const updateTicket = (ticket) => {
+  return async (dispatch) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/Tickets", {
+        method: "PUT",
+        body: JSON.stringify(ticket),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch tickets");
+      }
+      const data = await res.json();
+      dispatch(ticketsActions.updateTicket(ticket));
+    } catch (error) {
+      throw new Error("Failed to fetch tickets");
+      // dispatch({ type: "FETCH_TICKETS_FAILURE", payload: error.message });
+    }
+  };
+};
+export const getSpecificTicket = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/Tickets", {
+        method: "GET",
+        body: JSON.stringify(id),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch tickets");
+      }
+      const data = await res.json();
+      dispatch(ticketsActions.getSpecificTicket(id));
+    } catch (error) {
+      throw new Error("Failed to fetch tickets");
+      // dispatch({ type: "FETCH_TICKETS_FAILURE", payload: error.message });
+    }
+  };
+};
+export const getAllTickets = () => {
+  return async (dispatch) => {
+    try {
+      const res = await fetch("http://localhost:3000/api/Tickets", {
+        method: "GET",
+      });
+      if (!res.ok) {
+        throw new Error("Failed to fetch tickets");
+      }
+      const data = await res.json();
+      dispatch(ticketsActions.getAllTickets());
+    } catch (error) {
+      throw new Error("Failed to fetch tickets");
+      // dispatch({ type: "FETCH_TICKETS_FAILURE", payload: error.message });
     }
   };
 };

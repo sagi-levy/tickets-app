@@ -40,17 +40,15 @@ const EditTicketForm = ({ ticket }) => {
       try {
         // Dispatch the action to update the ticket
         await dispatch(updateTicket(ticket._id, formData));
-
-        // Refresh and navigate to home page
+      // or like this ? updateTicket(ticket._id, formData)
       } catch (error) {
         console.error(error);
-        // Handle error
       }
     } else {
       try {
         // Dispatch the action to update the ticket
-        await dispatch(createTicket(ticket._id, formData));
-
+        await dispatch(ticketsActions.createTicket({ data: formData }));
+  // or like this ? createTicket(ticket._id, formData)
         // Refresh and navigate to home page
       } catch (error) {
         console.error(error);
