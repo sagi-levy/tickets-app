@@ -1,5 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
-const tickets = [];
+
+const getAllTickets = async () => {
+  try {
+    const res = await fetch("http://localhost:3000/api/Tickets", {
+      method: "GET",
+    });
+
+    const data = await res.tickets.json();
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch tickets");
+  }
+};
+
+let tickets = getAllTickets();
+
+
+
 const ticketsSlice = createSlice({
   name: "tickets",
   initialState: tickets,

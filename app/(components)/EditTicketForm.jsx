@@ -39,20 +39,19 @@ const EditTicketForm = ({ ticket }) => {
     if (EDITMODE) {
       try {
         // Dispatch the action to update the ticket
-        await dispatch(updateTicket(ticket._id, formData));
-      // or like this ? updateTicket(ticket._id, formData)
+        // or like this ?  await dispatch(updateTicket(ticket._id, formData));
+        updateTicket(ticket._id, formData);
       } catch (error) {
         console.error(error);
       }
     } else {
       try {
         // Dispatch the action to update the ticket
-        await dispatch(ticketsActions.createTicket({ data: formData }));
-  // or like this ? createTicket(ticket._id, formData)
+        // or like this ? await dispatch(ticketsActions.createTicket({ data: formData }));
+        createTicket(ticket._id, formData);
         // Refresh and navigate to home page
       } catch (error) {
         console.error(error);
-        // Handle error
       }
     }
     router.refresh();

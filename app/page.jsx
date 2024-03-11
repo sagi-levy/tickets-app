@@ -9,7 +9,20 @@ const Dashboard = async () => {
   const tickets = useSelector((state) => state.tickets);
 
   useEffect(() => {
-    dispatch(fetchTickets()); // Dispatch action to fetch tickets when the component mounts
+    const getAllTickets = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/Tickets", {
+          method: "GET",
+        });
+    
+        const data = await res.tickets.json();
+        return data;
+      } catch (error) {
+        throw new Error("Failed to fetch tickets");
+      }
+    };
+    
+    dispatch(getAllTickets(data));
   }, [dispatch]);
   // Make sure we have tickets needed for production build.
   if (!tickets) {

@@ -39,7 +39,7 @@ export const deleteTicket = (ticketID) => {
     }
   };
 };
-export const updateTicket = (ticket) => {
+export const updateTicket = (ticket, id) => {
   return async (dispatch) => {
     try {
       const res = await fetch("http://localhost:3000/api/Tickets", {
