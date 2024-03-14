@@ -61,8 +61,9 @@ const EditTicketForm = ({ ticket }) => {
         throw new Error("failed to create ticket");
       }
     }
-    router.refresh();
     router.push("/");
+    router.refresh();
+
   };
   return (
     <div className=" flex justify-center">
