@@ -1,10 +1,11 @@
+"use client";
 import TicketCard from "./(components)/TicketCard";
 import EditTicketForm from "./(components)/EditTicketForm";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchTickets } from "./Store/ticketActions";
 import React, { useEffect } from "react";
 
-const Dashboard = async () => {
+const Dashboard = () => {
   const dispatch = useDispatch();
   const tickets = useSelector((state) => state.tickets);
 
@@ -14,19 +15,20 @@ const Dashboard = async () => {
         const res = await fetch("http://localhost:3000/api/Tickets", {
           method: "GET",
         });
-    
-        const data = await res.tickets.json();
-        return data;
+
+        const data = await res.json();
+        dispatch(fetchTickets(data)); // Assuming fetchTickets is an action creator
       } catch (error) {
-        throw new Error("Failed to fetch tickets");
+        console.error("Failed to fetch tickets:", error);
       }
     };
-    
-    dispatch(getAllTickets(data));
+
+    getAllTickets();
   }, [dispatch]);
-  // Make sure we have tickets needed for production build.
+
+  // Render loading state if tickets are not yet available
   if (!tickets) {
-    return <p>No tickets.</p>;
+    return <p>Loading...</p>;
   }
 
   const uniqueCategories = [
@@ -35,27 +37,25 @@ const Dashboard = async () => {
 
   return (
     <div>
-      {" "}
       <div>Dashboard</div>
       <div className="p-5">
         <div>
-          {tickets &&
-            uniqueCategories?.map((uniqueCategory, categoryIndex) => (
-              <div key={categoryIndex} className="mb-4">
-                <h2>{uniqueCategory}</h2>
-                <div className="lg:grid grid-cols-2 xl:grid-cols-4 ">
-                  {tickets
-                    .filter((ticket) => ticket.category === uniqueCategory)
-                    .map((filteredTicket, _index) => (
-                      <TicketCard
-                        id={_index}
-                        key={_index}
-                        ticket={filteredTicket}
-                      />
-                    ))}
-                </div>
+          {uniqueCategories?.map((uniqueCategory, categoryIndex) => (
+            <div key={categoryIndex} className="mb-4">
+              <h2>{uniqueCategory}</h2>
+              <div className="lg:grid grid-cols-2 xl:grid-cols-4 ">
+                {tickets
+                  .filter((ticket) => ticket.category === uniqueCategory)
+                  .map((filteredTicket, _index) => (
+                    <TicketCard
+                      id={_index}
+                      key={_index}
+                      ticket={filteredTicket}
+                    />
+                  ))}
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       </div>
     </div>

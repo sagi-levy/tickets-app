@@ -3,6 +3,8 @@ import { Inter } from "next/font/google";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import Nav from "./(components)/nav";
+import StoreProvider from './StoreProvider'; // Path to your StoreProvider component
+
 config.autoAddCss = false;
 const inter = Inter({ subsets: ["latin"] });
 import React from "react";
@@ -20,10 +22,10 @@ export default function RootLayout({ children }) {
         <div className="flex flex-col h-screen max-h-screen">
           <Nav />
           <div className="flex-grow overflow-y-auto bg-page text-default-text">
-            <Provider store={store}>
+            <StoreProvider store={store}>
               {/* Render the children components */}
               {children}
-            </Provider>
+            </StoreProvider>
           </div>
         </div>
       </body>
