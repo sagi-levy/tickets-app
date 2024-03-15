@@ -1,13 +1,11 @@
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useDispatch } from 'react-redux';
-import { deleteTicket } from '../Store/ticketActions'; // Import your action creator
-
+import { useDispatch } from "react-redux";
+import ticketsActions from "../Store/ticketsSlice";
+import { deleteTicket } from "../Store/ticketActions";
 const DeleteBlock = ({ id }) => {
-  const dispatch = useDispatch();
-
   const handleDelete = () => {
-    dispatch(deleteTicket(id)); // Dispatch the action with the ticket ID
+    deleteTicket();
   };
 
   return (

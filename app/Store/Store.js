@@ -1,20 +1,14 @@
-// Store/Store.js
+"use client";
 
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk'; // Import thunk middleware for async actions
-import ticketReducer from './ticketReducer'; // Import ticket reducer
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import thunk from "redux-thunk"; // Import thunk middleware for async actions
+import ticketsSlice from "./ticketsSlice"; // Import ticket reducer
 
+import { configureStore } from "@reduxjs/toolkit";
 
-
-// Define initial state
-
-// Define ticket reducer
-
-// Combine reducers
-const rootReducer = combineReducers({
-  tickets: ticketReducer,
-  // Add more reducers if needed
+const store = configureStore({
+  reducer: {
+    tickets: ticketsSlice,
+  },
 });
-
-// Create store
-export const store = createStore(rootReducer, applyMiddleware(thunk));
+export default store;
